@@ -33,8 +33,6 @@ import com.tuya.smart.aiipc.netconfig.mqtt.TuyaNetConfig;
 import com.tuya.smart.aiipc.trans.ServeInfo;
 import com.tuya.smart.aiipc.trans.TransJNIInterface;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
@@ -54,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     String authkey = "";
 
     private boolean isFirst = true;
+    private LocalDataBean localDataBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initSDK() {
-        if(uid == null || pid == null || authkey == null){
+        if (uid == null || pid == null || authkey == null) {
             return;
         }
 
@@ -128,6 +127,15 @@ public class MainActivity extends AppCompatActivity {
         IPCServiceManager.getInstance().setResetHandler(isHardward -> {
 
             if (mHandler != null) {
+                //通知对端从心跳列表中去除
+                if (localDataBean != null) {
+                    Intent intent = new Intent("ipc.serverInfo.reset");
+                    intent.putExtra("strvalue", new Gson().toJson(localDataBean));
+                    intent.setComponent(new ComponentName("com.tuya.myapplication", "com.tuya.myapplication.ResetBroadCast"));
+                    sendBroadcast(intent);
+                    Log.d("xsj", "ResetBroadCast is send");
+                }
+
                 mHandler.postDelayed(() -> {
                     //restart
                     Intent mStartActivity = getPackageManager().getLaunchIntentForPackage(getPackageName());
@@ -163,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                                 isFirst = false;
                                 //获取心跳信息，保存
                                 ServeInfo serveInfo = transManager.getIpcLowPowerServer();
-                                LocalDataBean localDataBean = new LocalDataBean();
+                                localDataBean = new LocalDataBean();
                                 localDataBean.ip = serveInfo.ip;
                                 localDataBean.port = serveInfo.port;
                                 localDataBean.deviceId = transManager.getIpcDeviceId();
@@ -171,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                                 try {
                                     Intent intent = new Intent("ipc.serverInfo.flush");
                                     intent.putExtra("strvalue", new Gson().toJson(localDataBean));
-                                    intent.setComponent(new ComponentName("com.tuya.myapplication","com.tuya.myapplication.DeviceListBroadCast"));
+                                    intent.setComponent(new ComponentName("com.tuya.myapplication", "com.tuya.myapplication.DeviceListBroadCast"));
                                     sendBroadcast(intent);
                                     Log.d("xsj", "strvalue sendbroadcast");
                                 } catch (Exception e) {

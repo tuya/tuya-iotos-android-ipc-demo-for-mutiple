@@ -26,6 +26,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".BootBroadCastRevicer"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ipc.action.boot" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
