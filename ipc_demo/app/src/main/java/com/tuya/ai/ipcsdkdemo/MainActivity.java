@@ -3,56 +3,45 @@ package com.tuya.ai.ipcsdkdemo;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
 import com.tuya.ai.ipcsdkdemo.audio.FileAudioCapture;
-import com.tuya.ai.ipcsdkdemo.video.H264FileVideoCapture;
 import com.tuya.ai.ipcsdkdemo.video.VideoCapture;
 import com.tuya.smart.aiipc.base.permission.PermissionUtil;
 import com.tuya.smart.aiipc.ipc_sdk.IPCSDK;
 import com.tuya.smart.aiipc.ipc_sdk.api.Common;
-import com.tuya.smart.aiipc.ipc_sdk.api.IControllerManager;
 import com.tuya.smart.aiipc.ipc_sdk.api.IDeviceManager;
 import com.tuya.smart.aiipc.ipc_sdk.api.IFeatureManager;
 import com.tuya.smart.aiipc.ipc_sdk.api.IMediaTransManager;
 import com.tuya.smart.aiipc.ipc_sdk.api.IMqttProcessManager;
 import com.tuya.smart.aiipc.ipc_sdk.api.INetConfigManager;
 import com.tuya.smart.aiipc.ipc_sdk.api.IParamConfigManager;
-import com.tuya.smart.aiipc.ipc_sdk.callback.DPConst;
+import com.tuya.smart.aiipc.ipc_sdk.callback.IMqttStatusCallback;
 import com.tuya.smart.aiipc.ipc_sdk.callback.NetConfigCallback;
-import com.tuya.smart.aiipc.ipc_sdk.impl.NetConfigManagerImpl;
 import com.tuya.smart.aiipc.ipc_sdk.service.IPCServiceManager;
 import com.tuya.smart.aiipc.netconfig.ConfigProvider;
 import com.tuya.smart.aiipc.netconfig.mqtt.TuyaNetConfig;
-import com.tuya.smart.aiipc.trans.IPCLog;
+import com.tuya.smart.aiipc.trans.ServeInfo;
 import com.tuya.smart.aiipc.trans.TransJNIInterface;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.TimeZone;
-
-import static com.tuya.smart.aiipc.ipc_sdk.callback.DPEvent.TUYA_DP_LIGHT;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "IPC_DEMO";
 
     SurfaceView surfaceView;
-
-    H264FileVideoCapture h264FileMainVideoCapture;
 
     VideoCapture videoCapture;
 
@@ -64,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     String uid = "";
     String authkey = "";
 
+    private boolean isFirst = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         pid = getIntent().getStringExtra("pid");
         uid = getIntent().getStringExtra("uid");
         authkey = getIntent().getStringExtra("key");
+
         Log.d(TAG, "pid is " + pid + " uid is " + uid + " key is " + authkey);
 
         surfaceView = findViewById(R.id.surface);
@@ -94,26 +86,6 @@ public class MainActivity extends AppCompatActivity {
                 String code = iDeviceManager.getQrCode(null);
                 Log.d(TAG, "ccc qrcode: " + code);
             }
-
-            /*
-            IMediaTransManager mediaTransManager = IPCServiceManager.getInstance().getService(IPCServiceManager.IPCService.MEDIA_TRANS_SERVICE);
-
-            try {
-                InputStream fileStream = getAssets().open("leijun.jpeg");
-
-                byte[] buffer = new byte[2048];
-                int bytesRead;
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                while ((bytesRead = fileStream.read(buffer)) != -1) {
-                    output.write(buffer, 0, bytesRead);
-                }
-                byte[] file = output.toByteArray();
-                mediaTransManager.sendDoorBellCallForPress(file, Common.NOTIFICATION_CONTENT_TYPE_E.NOTIFICATION_CONTENT_JPEG);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-*/
         });
 
         PermissionUtil.check(this, new String[]{
@@ -132,6 +104,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initSDK() {
+        if(uid == null || pid == null || authkey == null){
+            return;
+        }
+
         IPCSDK.initSDK(this);
 //        IPCSDK.openWriteLog(this, "/sdcard/tuya_log/ipc", 3);
         LoadParamConfig();
@@ -178,7 +154,44 @@ public class MainActivity extends AppCompatActivity {
                 IMediaTransManager mediaTransManager = IPCServiceManager.getInstance().getService(IPCServiceManager.IPCService.MEDIA_TRANS_SERVICE);
                 IFeatureManager featureManager = IPCServiceManager.getInstance().getService(IPCServiceManager.IPCService.FEATURE_SERVICE);
 
-                mqttProcessManager.setMqttStatusChangedCallback(status -> Log.w("onMqttStatus", status + ""));
+                mqttProcessManager.setMqttStatusChangedCallback(new IMqttStatusCallback() {
+                    @Override
+                    public void onMqttStatus(int i) {
+                        Log.d("xsj", "strvalue STATUS_CLOUD_CONN is " + i);
+                        if (i == Common.MqttConnectStatus.STATUS_CLOUD_CONN) {
+                            if (isFirst) {
+                                isFirst = false;
+                                //获取心跳信息，保存
+                                ServeInfo serveInfo = transManager.getIpcLowPowerServer();
+                                LocalDataBean localDataBean = new LocalDataBean();
+                                localDataBean.ip = serveInfo.ip;
+                                localDataBean.port = serveInfo.port;
+                                localDataBean.deviceId = transManager.getIpcDeviceId();
+                                localDataBean.key = transManager.getIpcLocalKey();
+                                try {
+                                    Intent intent = new Intent("ipc.serverInfo.flush");
+                                    intent.putExtra("strvalue", new Gson().toJson(localDataBean));
+                                    intent.setComponent(new ComponentName("com.tuya.myapplication","com.tuya.myapplication.DeviceListBroadCast"));
+                                    sendBroadcast(intent);
+                                    Log.d("xsj", "strvalue sendbroadcast");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                //  start push media
+                                transManager.startMultiMediaTrans(5);
+
+                                // video stream from camera
+                                videoCapture = new VideoCapture(Common.ChannelIndex.E_CHANNEL_VIDEO_MAIN);
+                                videoCapture.startVideoCapture();
+
+                                // audio stream from local file
+                                fileAudioCapture = new FileAudioCapture(MainActivity.this);
+                                fileAudioCapture.startFileCapture();
+                            }
+                        }
+                    }
+                });
 
                 IDeviceManager iDeviceManager = IPCServiceManager.getInstance().getService(IPCServiceManager.IPCService.DEVICE_SERVICE);
                 // set region
@@ -190,38 +203,11 @@ public class MainActivity extends AppCompatActivity {
 
                 runOnUiThread(() -> findViewById(R.id.call).setEnabled(true));
 
-
-//                int regStat = iDeviceManager.getRegisterStatus();
-//                Log.d(TAG, "ccc getting qrcode, register status: " + regStat);
-//                if (regStat != 2) {
-//                    String code = iDeviceManager.getQrCode(null);
-//                    Log.d(TAG, "111 ccc qrcode: " + code);
-//                }
-
-                //  start push media
-                transManager.startMultiMediaTrans(5);
-
-//                h264FileMainVideoCapture = new H264FileVideoCapture(MainActivity.this, "test.h264");
-//                h264FileMainVideoCapture.startVideoCapture(Common.ChannelIndex.E_CHANNEL_VIDEO_MAIN);
-
-                // video stream from camera
-                videoCapture = new VideoCapture(Common.ChannelIndex.E_CHANNEL_VIDEO_MAIN);
-                videoCapture.startVideoCapture();
-
-                // audio stream from local file
-                fileAudioCapture = new FileAudioCapture(MainActivity.this);
-                fileAudioCapture.startFileCapture();
-
                 mediaTransManager.setDoorBellCallStatusCallback(status -> {
 
                     Log.d(TAG, "doorbell back: " + status);
 
                 });
-
-//                mediaTransManager.addAudioTalkCallback(bytes -> {
-//                    Log.d(TAG, "audio callback: " + bytes.length);
-//                });
-
                 syncTimeZone();
             }
 
