@@ -48,7 +48,8 @@ public class ResetBroadCast extends BroadcastReceiver {
 
             }
 
-            //杀掉当前进程，心跳连接重新初始化，可以根据业务需要，也可以不杀当前进程
+
+            }//杀掉当前进程，心跳连接重新初始化，可以根据业务需要，也可以不杀当前进程
             Intent mStartActivity = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
             if (mStartActivity != null) {
                 int mPendingIntentId = 123456;
@@ -57,7 +58,6 @@ public class ResetBroadCast extends BroadcastReceiver {
                 AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
                 Runtime.getRuntime().exit(0);
-            }
         }
     }
 }

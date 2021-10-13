@@ -1,5 +1,7 @@
 package com.tuya.myapplication;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +42,17 @@ public class DeviceListBroadCast extends BroadcastReceiver {
             }else {
                 sharedPreferences.edit().putString("str_value", valueStr + "&&&&" +str).commit();
             }
+//            //杀掉当前进程，心跳连接重新初始化，可以根据业务需要，也可以不杀当前进程
+//            Intent mStartActivity = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+//            if (mStartActivity != null) {
+//                int mPendingIntentId = 123456;
+//                PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId
+//                        , mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+//                AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+//                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+//                Runtime.getRuntime().exit(0);
+//            }
+
         }
     }
 }
