@@ -176,6 +176,9 @@ public class MainActivity extends AppCompatActivity {
                                 localDataBean.port = serveInfo.port;
                                 localDataBean.deviceId = transManager.getIpcDeviceId();
                                 localDataBean.key = transManager.getIpcLocalKey();
+                                localDataBean.pid = pid;
+                                localDataBean.authkey = authkey;
+                                localDataBean.uid = uid;
                                 try {
                                     Intent intent = new Intent("ipc.serverInfo.flush");
                                     intent.putExtra("strvalue", new Gson().toJson(localDataBean));

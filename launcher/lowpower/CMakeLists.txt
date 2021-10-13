@@ -19,7 +19,7 @@ find_library( # Sets the name of the path variable.
         )
 
 add_library(tuya_iot SHARED IMPORTED)
-set_target_properties(ty_iot_sdk PROPERTIES IMPORTED_LOCATION
+set_target_properties(tuya_iot PROPERTIES IMPORTED_LOCATION
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/${CMAKE_ANDROID_ARCH_ABI}/libtuya_iot.a)
 
 target_link_libraries(
