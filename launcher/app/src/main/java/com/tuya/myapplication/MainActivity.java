@@ -119,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = getPackageManager().getLaunchIntentForPackage("com.tuya.ai.ipcsdkdemo");
                 if (intent != null) {
                     intent.putExtra("pid", "dptafgtximis2xab");
-                    intent.putExtra("uid", "tuya0d45d622c03b2e45");
-                    intent.putExtra("key", "lU0DfbLpQ2abCkcwHpE6hObr1zbaVe0s");
+                    intent.putExtra("uid", "tuyac2f83c4ce6b97c38");
+                    intent.putExtra("key", "mE0FIMI9tqzi9tglSEuAQWtd868Qih3T");
                     startActivity(intent);
                 }
             },500);
@@ -138,8 +138,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = getPackageManager().getLaunchIntentForPackage("com.tuya.ai.ipcsdkdemo");
                 if (intent != null) {
                     intent.putExtra("pid", "dptafgtximis2xab");
-                    intent.putExtra("uid", "tuyae33a5968cf14d4bf");
-                    intent.putExtra("key", "7vOxnAOt42H9xDDOkXsYwVbe9DSdoAx0");
+                    intent.putExtra("uid", "tuya4861cd3df035be99");
+                    intent.putExtra("key", "8lghcA8XBkqbDlgtJTnmxFFXFhrMAemz");
                     startActivity(intent);
                 }
             },500);

@@ -59,15 +59,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        pid = getIntent().getStringExtra("pid");
-//        uid = getIntent().getStringExtra("uid");
-//        authkey = getIntent().getStringExtra("key");
-        pid = "dptafgtximis2xab";
-//        uid = "tuya0d45d622c03b2e45";
-//        authkey = "lU0DfbLpQ2abCkcwHpE6hObr1zbaVe0s";
-
-        uid = "tuyae33a5968cf14d4bf";
-        authkey = "7vOxnAOt42H9xDDOkXsYwVbe9DSdoAx0";
+        pid = getIntent().getStringExtra("pid");
+        uid = getIntent().getStringExtra("uid");
+        authkey = getIntent().getStringExtra("key");
 
         Log.d(TAG, "pid is " + pid + " uid is " + uid + " key is " + authkey);
 
@@ -80,18 +74,18 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.stop_record).setOnClickListener(v -> TransJNIInterface.getInstance().stopLocalStorage());
 
-//        findViewById(R.id.call).setOnClickListener(v -> {
-//
-//            IDeviceManager iDeviceManager = IPCServiceManager.getInstance().getService(IPCServiceManager.IPCService.DEVICE_SERVICE);
-//            // check register status
-//            int regStat = iDeviceManager.getRegisterStatus();
-//            Log.d(TAG, "ccc getting qrcode, register status: " + regStat);
-//            if (regStat != 2) {
-//                // get short url for qrcode
-//                String code = iDeviceManager.getQrCode(null);
-//                Log.d(TAG, "ccc qrcode: " + code);
-//            }
-//        });
+        findViewById(R.id.call).setOnClickListener(v -> {
+
+            IDeviceManager iDeviceManager = IPCServiceManager.getInstance().getService(IPCServiceManager.IPCService.DEVICE_SERVICE);
+            // check register status
+            int regStat = iDeviceManager.getRegisterStatus();
+            Log.d(TAG, "ccc getting qrcode, register status: " + regStat);
+            if (regStat != 2) {
+                // get short url for qrcode
+                String code = iDeviceManager.getQrCode(null);
+                Log.d(TAG, "ccc qrcode: " + code);
+            }
+        });
 
         PermissionUtil.check(this, new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
