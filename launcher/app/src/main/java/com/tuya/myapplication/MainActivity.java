@@ -62,10 +62,10 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("key", heartBean.getAuthkey());
                             startActivity(intent);
                         }
-                    } catch (Exception ignored){
+                    } catch (Exception ignored) {
 
                     }
-                },500);
+                }, 500);
             }
 
             @Override
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 //0表示正常关闭，比如主进程拉起，包活链路被主动踢掉的情况。非零，表示异常。此时用户可以重新add 包活
                 if (result != 0) {
                     HeartBean heartBean = heartBeanArrayList.get(index);
-                            LowpowerManager.INSTANCE.addDeviceHeart(index, Integer.parseInt(heartBean.getIp()), Integer.parseInt(heartBean.getPort()), heartBean.getDeviceId(),
+                    LowpowerManager.INSTANCE.addDeviceHeart(index, Integer.parseInt(heartBean.getIp()), Integer.parseInt(heartBean.getPort()), heartBean.getDeviceId(),
                             heartBean.getDeviceId().length(), heartBean.getKey(), heartBean.getKey().length());
                 }
             }
@@ -105,8 +105,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-//        LowpowerManager.INSTANCE.addDeviceHeart(1, 1, 44, "11", 2, "11", 2);
-
         findViewById(R.id.btn_jump).setOnClickListener(v -> {
             Log.d(TAG, "onCreate: btn_jump");
             //先kill ipc进程
@@ -123,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("key", "mE0FIMI9tqzi9tglSEuAQWtd868Qih3T");
                     startActivity(intent);
                 }
-            },500);
+            }, 500);
         });
 
         findViewById(R.id.btn_jump2).setOnClickListener(v -> {
@@ -142,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("key", "8lghcA8XBkqbDlgtJTnmxFFXFhrMAemz");
                     startActivity(intent);
                 }
-            },500);
+            }, 500);
         });
     }
 
