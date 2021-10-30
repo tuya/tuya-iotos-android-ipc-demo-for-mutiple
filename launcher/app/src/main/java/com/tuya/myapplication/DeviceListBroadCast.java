@@ -18,11 +18,10 @@ public class DeviceListBroadCast extends BroadcastReceiver {
             Log.d("xsj", "DeviceListBroadCast action is ipc.serverInfo.flush string is " + str);
             SharedPreferences sharedPreferences = context.getSharedPreferences("connection_info", Context.MODE_PRIVATE);
             String valueStr = sharedPreferences.getString("str_value", "");
-            Log.d("xsj", "DeviceListBroadCast str_value is " + valueStr);
 
             if (!valueStr.equals("")) {
                 boolean isInclude = false;
-                String[] strings = str.split("&&&&");
+                String[] strings = valueStr.split("&&&&");
                 if (strings.length > 0) {
                     for (String i : strings) {
                         if (i.equals(str) && !i.equals("")) {
