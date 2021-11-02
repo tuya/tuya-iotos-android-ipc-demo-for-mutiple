@@ -66,7 +66,8 @@ int close_socket_callbcack_proc(int index, int result) {
 extern "C"
 JNIEXPORT jint  JNICALL
 Java_com_tuya_lowpower_LowpowerManager_aliveInit(JNIEnv *env, jobject object) {
-    lowpwerClass = env->FindClass("com/tuya/lowpower/LowpowerManager");
+    lowpwerClass = static_cast<jclass>(env->NewGlobalRef(
+            env->FindClass("com/tuya/lowpower/LowpowerManager")));
     lowperObject = env->NewGlobalRef(object);
 
     TUYA_LOWPOWER_ALIVE_CTX_S ctx = {0};
