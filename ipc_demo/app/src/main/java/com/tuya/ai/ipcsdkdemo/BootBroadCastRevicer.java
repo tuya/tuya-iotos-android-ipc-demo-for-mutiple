@@ -11,7 +11,7 @@ public class BootBroadCastRevicer extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("ipc.action.boot")) {
-            Runtime.getRuntime().exit(0);
+//            Runtime.getRuntime().exit(0);
         }
     }
 }

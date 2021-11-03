@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < strings.length; i++) {
                     if (!strings[i].equals("")) {
                         HeartBean heartBean = new Gson().fromJson(strings[i], HeartBean.class);
+                        Log.d("xsj","device id is " + heartBean.getDeviceId());
                         heartBeanArrayList.add(heartBean);
                         LowpowerManager.INSTANCE.addDeviceHeart(
                                 i,
@@ -116,31 +117,31 @@ public class MainActivity extends AppCompatActivity {
                 //重启ipc
                 Intent intent = getPackageManager().getLaunchIntentForPackage("com.tuya.ai.ipcsdkdemo");
                 if (intent != null) {
-                    intent.putExtra("pid", "dptafgtximis2xab");
-                    intent.putExtra("uid", "tuyac2f83c4ce6b97c38");
-                    intent.putExtra("key", "mE0FIMI9tqzi9tglSEuAQWtd868Qih3T");
+                    intent.putExtra("pid", "lh5ixafudhcj26zx");
+                    intent.putExtra("uid", "tuyab7f17df400d37015");
+                    intent.putExtra("key", "SuUysBVqENt6ZgUF2FNuPOK5G6kqwsfE");
                     startActivity(intent);
                 }
             }, 500);
         });
 
         findViewById(R.id.btn_jump2).setOnClickListener(v -> {
-            Log.d(TAG, "onCreate: btn_jump2");
-            //先kill ipc进程
-            Intent intentTwo = new Intent("ipc.action.boot");
-            intentTwo.setComponent(new ComponentName("com.tuya.ai.ipcsdkdemo", "com.tuya.ai.ipcsdkdemo.BootBroadCastRevicer"));
-            sendBroadcast(intentTwo);
-
-            new Handler().postDelayed(() -> {
-                //重启ipc
-                Intent intent = getPackageManager().getLaunchIntentForPackage("com.tuya.ai.ipcsdkdemo");
-                if (intent != null) {
-                    intent.putExtra("pid", "dptafgtximis2xab");
-                    intent.putExtra("uid", "tuya4861cd3df035be99");
-                    intent.putExtra("key", "8lghcA8XBkqbDlgtJTnmxFFXFhrMAemz");
-                    startActivity(intent);
-                }
-            }, 500);
+//            Log.d(TAG, "onCreate: btn_jump2");
+//            //先kill ipc进程
+//            Intent intentTwo = new Intent("ipc.action.boot");
+//            intentTwo.setComponent(new ComponentName("com.tuya.ai.ipcsdkdemo", "com.tuya.ai.ipcsdkdemo.BootBroadCastRevicer"));
+//            sendBroadcast(intentTwo);
+//
+//            new Handler().postDelayed(() -> {
+//                //重启ipc
+//                Intent intent = getPackageManager().getLaunchIntentForPackage("com.tuya.ai.ipcsdkdemo");
+//                if (intent != null) {
+//                    intent.putExtra("pid", "dptafgtximis2xab");
+//                    intent.putExtra("uid", "tuya4861cd3df035be99");
+//                    intent.putExtra("key", "8lghcA8XBkqbDlgtJTnmxFFXFhrMAemz");
+//                    startActivity(intent);
+//                }
+//            }, 500);
         });
     }
 

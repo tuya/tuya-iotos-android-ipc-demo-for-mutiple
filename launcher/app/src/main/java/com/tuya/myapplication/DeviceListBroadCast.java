@@ -38,7 +38,7 @@ public class DeviceListBroadCast extends BroadcastReceiver {
                 sharedPreferences.edit().putString("str_value", valueStr + "&&&&" + str).commit();
             }
             //杀掉当前进程，心跳连接重新初始化，可以根据业务需要，也可以不杀当前进程
-            Runtime.getRuntime().exit(0);
+//            Runtime.getRuntime().exit(0);
         }
     }
 }

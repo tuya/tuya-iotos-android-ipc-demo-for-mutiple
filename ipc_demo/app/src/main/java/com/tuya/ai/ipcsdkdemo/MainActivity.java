@@ -63,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
         uid = getIntent().getStringExtra("uid");
         authkey = getIntent().getStringExtra("key");
 
+//        pid = "dptafgtximis2xab";
+//        uid = "tuyac2f83c4ce6b97c38";
+//        authkey = "mE0FIMI9tqzi9tglSEuAQWtd868Qih3T";
+
         Log.d(TAG, "pid is " + pid + " uid is " + uid + " key is " + authkey);
 
         surfaceView = findViewById(R.id.surface);
