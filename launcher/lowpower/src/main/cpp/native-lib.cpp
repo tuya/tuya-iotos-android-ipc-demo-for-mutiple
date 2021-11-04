@@ -6,6 +6,7 @@
 #include <string.h>
 #include "tuya_lowpower_alive.h"
 #include <arpa/inet.h>
+#include "native_debug.h"
 
 jclass lowpwerClass = nullptr;
 jobject lowperObject = nullptr;
@@ -50,6 +51,7 @@ private:
 };
 
 int data_callbcack_proc(int index) {
+    LOGI("data_callbcack_proc index is %d", index);
     JNIEnvPtr envPtr;
     jmethodID wakeupId = envPtr->GetMethodID(lowpwerClass, "wakeUp", "(I)V");
     envPtr->CallVoidMethod(lowperObject, wakeupId, index);
@@ -57,6 +59,7 @@ int data_callbcack_proc(int index) {
 }
 
 int close_socket_callbcack_proc(int index, int result) {
+    LOGI("close_socket_callbcack_proc index is %d, result is %d", index, result);
     JNIEnvPtr envPtr;
     jmethodID closeId = envPtr->GetMethodID(lowpwerClass, "closeResult", "(II)V");
     envPtr->CallVoidMethod(lowperObject, closeId, index, result);
@@ -86,6 +89,8 @@ Java_com_tuya_lowpower_LowpowerManager_addDeviceHeart(JNIEnv *env, jobject objec
                                                       jint keyLen) {
     char *devId = const_cast<char *>(env->GetStringUTFChars(pdevId, nullptr));
     char *key = const_cast<char *>(env->GetStringUTFChars(pkey, nullptr));
+    LOGI("addDeviceHeart index is %d, serverIp is %d, port is %d, pdevId is %s, idlen is %d, pkey is %s, keyLen is %d",
+         index, serverIp, port, devId, idLen, key, keyLen);
     int ret = tuya_ipc_lowpower_alive_add(index, serverIp, port, devId, idLen, key, keyLen);
     env->ReleaseStringUTFChars(pdevId, devId);
     env->ReleaseStringUTFChars(pkey, key);
