@@ -1,5 +1,7 @@
 package com.tuya.lowpower
 
+import android.util.Log
+
 object LowpowerManager {
     init {
         System.loadLibrary("tuya_android")
@@ -44,4 +46,8 @@ object LowpowerManager {
         pdevId: String, idLen: Int, pkey: String,
         keyLen: Int
     ): Int
+
+    fun log(msg: String) {
+        Log.d("tuya_embedded", msg)
+    }
 }

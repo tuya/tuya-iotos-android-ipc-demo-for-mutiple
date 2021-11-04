@@ -24,14 +24,14 @@
  * */
 /* 普通的调试打印*/
 //#define TYLOGV(fmt, arg...) __android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, fmt, ##arg)
-//#define TYLOGI(fmt, arg...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, fmt, ##arg)
+#define TYLOGI(fmt, arg...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, fmt, ##arg)
 //#define TYLOGD(fmt, arg...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, fmt, ##arg)
 //#define TYLOGW(fmt, arg...) __android_log_print(ANDROID_LOG_WARN, LOG_TAG, fmt, ##arg)
 //#define TYLOGE(fmt, arg...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, fmt, ##arg)
 
 /**带函数名称和行号的打印*/
 //#define TYPOSLOGV(fmt, arg...) TYLOGV("[%s:%d]" fmt, __FUNCTION__, __LINE__, ##arg)
-//#define TYPOSLOGI(fmt, arg...) TYLOGI("[%s:%d]" fmt, __FUNCTION__, __LINE__, ##arg)
+#define TYPOSLOGI(fmt, arg...) TYLOGI("[%s:%d]" fmt, __FUNCTION__, __LINE__, ##arg)
 //#define TYPOSLOGD(fmt, arg...) TYLOGD("[%s:%d]" fmt, __FUNCTION__, __LINE__, ##arg)
 //#define TYPOSLOGW(fmt, arg...) TYLOGW("[%s:%d]" fmt, __FUNCTION__, __LINE__, ##arg)
 //#define TYPOSLOGE(fmt, arg...) TYLOGE("[%s:%d]" fmt, __FUNCTION__, __LINE__, ##arg)
