@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         String str = sharedPreferences.getString("str_value", "");
         Log.d("xsj", "str_value is " + str);
         if (!str.equals("")) {
+            int index = 0;
             String[] strings = str.split("&&&&");
             if (strings.length > 0) {
                 for (int i = 0; i < strings.length; i++) {
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("xsj","device id is " + heartBean.getDeviceId());
                         heartBeanArrayList.add(heartBean);
                         LowpowerManager.INSTANCE.addDeviceHeart(
-                                i,
+                                index,
                                 Integer.parseInt(heartBean.getIp()),
                                 Integer.parseInt(heartBean.getPort()),
                                 heartBean.getDeviceId(),
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                                 heartBean.getKey(),
                                 heartBean.getKey().length()
                         );
+                        index ++;
                     }
                 }
             }
@@ -117,9 +119,9 @@ public class MainActivity extends AppCompatActivity {
                 //重启ipc
                 Intent intent = getPackageManager().getLaunchIntentForPackage("com.tuya.ai.ipcsdkdemo");
                 if (intent != null) {
-                    intent.putExtra("pid", "lh5ixafudhcj26zx");
-                    intent.putExtra("uid", "tuyab7f17df400d37015");
-                    intent.putExtra("key", "SuUysBVqENt6ZgUF2FNuPOK5G6kqwsfE");
+                    intent.putExtra("pid", "g5xhwnzlmy64wlby");
+                    intent.putExtra("uid", "tuya83c7ea992d0a8313");
+                    intent.putExtra("key", "rnMToHjvU2m75VjByLU5MxM7gfbZRPHp");
                     startActivity(intent);
                 }
             }, 500);
