@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     String pid = "";
     String uid = "";
     String authkey = "";
+    int index = -1;
 
     private boolean isFirst = true;
     private LocalDataBean localDataBean;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         pid = getIntent().getStringExtra("pid");
         uid = getIntent().getStringExtra("uid");
         authkey = getIntent().getStringExtra("key");
+        index = getIntent().getIntExtra("index", -1);
 
 //        pid = "dptafgtximis2xab";
 //        uid = "tuyac2f83c4ce6b97c38";
@@ -101,9 +103,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            Intent intent = new Intent("ipc.serverInfo.readd");
+            intent.putExtra("index", index);
+            intent.setComponent(new ComponentName("com.tuya.myapplication", "com.tuya.myapplication.ReAddBroadCast"));
+            sendBroadcast(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 //        IPCSDK.closeWriteLog();
+
+        //
     }
 
     private void initSDK() {

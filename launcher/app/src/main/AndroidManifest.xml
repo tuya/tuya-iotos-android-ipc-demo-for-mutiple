@@ -41,6 +41,14 @@
                 <action android:name="ipc.serverInfo.reset" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name=".ReAddBroadCast"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ipc.serverInfo.readd" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

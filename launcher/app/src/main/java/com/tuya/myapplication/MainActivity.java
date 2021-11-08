@@ -1,6 +1,7 @@
 package com.tuya.myapplication;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE};
 
     private ArrayList<HeartBean> heartBeanArrayList = new ArrayList<>();
+
+    int localIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         String str = sharedPreferences.getString("str_value", "");
         Log.d("xsj", "str_value is " + str);
         if (!str.equals("")) {
-            int index = 0;
             String[] strings = str.split("&&&&");
             if (strings.length > 0) {
                 for (int i = 0; i < strings.length; i++) {
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("xsj","device id is " + heartBean.getDeviceId());
                         heartBeanArrayList.add(heartBean);
                         LowpowerManager.INSTANCE.addDeviceHeart(
-                                index,
+                                localIndex,
                                 Integer.parseInt(heartBean.getIp()),
                                 Integer.parseInt(heartBean.getPort()),
                                 heartBean.getDeviceId(),
@@ -102,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                                 heartBean.getKey(),
                                 heartBean.getKey().length()
                         );
-                        index ++;
+                        localIndex ++;
                     }
                 }
             }
@@ -122,28 +125,69 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("pid", "g5xhwnzlmy64wlby");
                     intent.putExtra("uid", "tuya83c7ea992d0a8313");
                     intent.putExtra("key", "rnMToHjvU2m75VjByLU5MxM7gfbZRPHp");
+                    intent.putExtra("index", 0);
                     startActivity(intent);
                 }
             }, 500);
         });
 
         findViewById(R.id.btn_jump2).setOnClickListener(v -> {
-//            Log.d(TAG, "onCreate: btn_jump2");
-//            //先kill ipc进程
-//            Intent intentTwo = new Intent("ipc.action.boot");
-//            intentTwo.setComponent(new ComponentName("com.tuya.ai.ipcsdkdemo", "com.tuya.ai.ipcsdkdemo.BootBroadCastRevicer"));
-//            sendBroadcast(intentTwo);
-//
-//            new Handler().postDelayed(() -> {
-//                //重启ipc
-//                Intent intent = getPackageManager().getLaunchIntentForPackage("com.tuya.ai.ipcsdkdemo");
-//                if (intent != null) {
-//                    intent.putExtra("pid", "dptafgtximis2xab");
-//                    intent.putExtra("uid", "tuya4861cd3df035be99");
-//                    intent.putExtra("key", "8lghcA8XBkqbDlgtJTnmxFFXFhrMAemz");
-//                    startActivity(intent);
-//                }
-//            }, 500);
+            Log.d(TAG, "onCreate: btn_jump2");
+            //先kill ipc进程
+            Intent intentTwo = new Intent("ipc.action.boot");
+            intentTwo.setComponent(new ComponentName("com.tuya.ai.ipcsdkdemo", "com.tuya.ai.ipcsdkdemo.BootBroadCastRevicer"));
+            sendBroadcast(intentTwo);
+
+            new Handler().postDelayed(() -> {
+                //重启ipc
+                Intent intent = getPackageManager().getLaunchIntentForPackage("com.tuya.ai.ipcsdkdemo");
+                if (intent != null) {
+                    intent.putExtra("pid", "g5xhwnzlmy64wlby");
+                    intent.putExtra("uid", "tuyaef9afe9a692ed792");
+                    intent.putExtra("key", "92TQS5kcOEGxDHZgCv3GYEoyKjGA6M9T");
+                    intent.putExtra("index", 1);
+                    startActivity(intent);
+                }
+            }, 500);
+        });
+
+
+        com.tuya.myapplication.ReAddBroadCast.setReaddListener(new com.tuya.myapplication.ReAddBroadCast.ReaddListener() {
+            @Override
+            public void reAddHerat(int index) {
+                Log.d("xsj", "reAddHerat index is " + index);
+//                HeartBean heartBean = heartBeanArrayList.get(index);
+//                LowpowerManager.INSTANCE.addDeviceHeart(index, Integer.parseInt(heartBean.getIp()), Integer.parseInt(heartBean.getPort()), heartBean.getDeviceId(),
+//                        heartBean.getDeviceId().length(), heartBean.getKey(), heartBean.getKey().length());
+
+                //读取建立心跳连接
+                SharedPreferences sharedPreferences = getSharedPreferences("connection_info", Context.MODE_PRIVATE);
+                String str = sharedPreferences.getString("str_value", "");
+                Log.d("xsj", "str_value is " + str);
+                if (!str.equals("")) {
+                    String[] strings = str.split("&&&&");
+                    if (strings.length > 0) {
+                        for (int i = 0; i < strings.length; i++) {
+                            if (!strings[i].equals("")) {
+                                HeartBean heartBean = new Gson().fromJson(strings[i], HeartBean.class);
+                                Log.d("xsj","device id is " + heartBean.getDeviceId());
+                                heartBeanArrayList.add(heartBean);
+                                LowpowerManager.INSTANCE.addDeviceHeart(
+                                        localIndex,
+                                        Integer.parseInt(heartBean.getIp()),
+                                        Integer.parseInt(heartBean.getPort()),
+                                        heartBean.getDeviceId(),
+                                        heartBean.getDeviceId().length(),
+                                        heartBean.getKey(),
+                                        heartBean.getKey().length()
+                                );
+                                localIndex ++;
+                            }
+                        }
+                    }
+                }
+
+            }
         });
     }
 
@@ -151,5 +195,13 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    class ReAddBroadCast extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
     }
 }
