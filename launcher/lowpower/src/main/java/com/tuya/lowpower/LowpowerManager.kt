@@ -47,7 +47,7 @@ object LowpowerManager {
         keyLen: Int
     ): Int
 
-    fun log(msg: String) {
-        Log.d("tuya_embedded", msg)
+    fun log(data: ByteArray) {
+        Log.d("tuya_embedded", String(data))
     }
 }

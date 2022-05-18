@@ -82,75 +82,27 @@ void LOGG(char *str, ...) {
     delete[] text;
 }
 
-int checkUtfString(const char *bytes) {
-    const char *origBytes = bytes;
-    if (bytes == NULL) {
-        return -1;
-    }
-    while (*bytes != '\0') {
-        unsigned char utf8 = *(bytes++);
-        // Switch on the high four bits.
-        switch (utf8 >> 4) {
-            case 0x00:
-            case 0x01:
-            case 0x02:
-            case 0x03:
-            case 0x04:
-            case 0x05:
-            case 0x06:
-            case 0x07: {
-                // Bit pattern 0xxx. No need for any extra bytes.
-                break;
-            }
-            case 0x08:
-            case 0x09:
-            case 0x0a:
-            case 0x0b:
-            case 0x0f: {
-                LOGW("****JNI WARNING: illegal start byte 0x%x\n", utf8);
-                return -1;
-            }
-            case 0x0e: {
-                // Bit pattern 1110, so there are two additional bytes.
-                utf8 = *(bytes++);
-                if ((utf8 & 0xc0) != 0x80) {
-                    LOGW("****JNI WARNING: illegal continuation byte 0x%x\n", utf8);
-                    return -1;
-                }
-                // Fall through to take care of the final byte.
-            }
-            case 0x0c:
-            case 0x0d: {
-                // Bit pattern 110x, so there is one additional byte.
-                utf8 = *(bytes++);
-                if ((utf8 & 0xc0) != 0x80) {
-                    LOGW("****JNI WARNING: illegal continuation byte 0x%x\n", utf8);
-                    return -1;
-                }
-                break;
-            }
-        }
-    }
-    return 0;
-}
-
 void TYLOG(char *str) {
     if (lowpwerClass != nullptr) {
 
         JNIEnvPtr curEnv;
         jmethodID logMethod = nullptr;
-        logMethod = curEnv->GetMethodID(lowpwerClass, "log", "(Ljava/lang/String;)V");
+        logMethod = curEnv->GetMethodID(lowpwerClass, "log", "([B)V");
 
         if (logMethod == nullptr) {
             return;
         }
 
-        int err = checkUtfString(str);
-        if (err != 0) {
-
-        } else {
-            curEnv->CallVoidMethod(lowperObject, logMethod, curEnv->NewStringUTF(str));
-        }
+//        int err = checkUtfString(str);
+//        if (err != 0) {
+//
+//        } else {
+        int len = strlen(str);
+        jbyteArray bytes = curEnv->NewByteArray(len);
+        curEnv->SetByteArrayRegion(bytes, 0, len, reinterpret_cast<const jbyte *>(str));
+        curEnv->CallVoidMethod(lowperObject, logMethod, bytes);
+        curEnv->DeleteLocalRef(bytes);
+//        }
     }
 }
 
