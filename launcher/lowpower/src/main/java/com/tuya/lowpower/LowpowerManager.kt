@@ -47,6 +47,8 @@ object LowpowerManager {
         keyLen: Int
     ): Int
 
+    external fun aliveDelete(index: Int): Int
+
     fun log(data: ByteArray) {
         Log.d("tuya_embedded", String(data))
     }

@@ -140,6 +140,15 @@ Java_com_tuya_lowpower_LowpowerManager_addDeviceHeart(JNIEnv *env, jobject objec
     return ret;
 }
 
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_tuya_lowpower_LowpowerManager_aliveDelete(JNIEnv *env, jobject object,jint index)
+{
+    LOGI("aliveDelete index is %d", index);
+    int ret = tuya_ipc_lowpower_alive_delete(index);
+    return ret;
+}
+
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *) {
     JNIEnv *env;
     if (vm->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {

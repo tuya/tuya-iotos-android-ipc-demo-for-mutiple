@@ -38,6 +38,10 @@ int tuya_ipc_lowpower_alive_init(TUYA_LOWPOWER_ALIVE_CTX_S *alive_ctx);
  *  keyLen:local key len
  */
 int tuya_ipc_lowpower_alive_add(int index,unsigned int serverIp,signed int port,char* pdevId, int idLen, char* pkey, int keyLen);
+/* tuya_ipc_lowpower_alive_delete 设备端主动调用close 包活链路。通常在无法add时，使用。
+*  index:参考TUYA_LOWPOWER_ALIVE_CTX_S中index说明。
+*/
+int tuya_ipc_lowpower_alive_delete(int index);
 #ifdef __cplusplus
 }
 #endif
