@@ -118,6 +118,7 @@ Java_com_tuya_lowpower_LowpowerManager_aliveInit(JNIEnv *env, jobject object) {
 
     TUYA_LOWPOWER_ALIVE_CTX_S ctx = {0};
     ctx.alive_time_interval = 60;
+    ctx.alive_max_number = 1024;
     ctx.wakeup_callback = data_callbcack_proc;
     ctx.close_socket_callback = close_socket_callbcack_proc;
     int ret = tuya_ipc_lowpower_alive_init(&ctx);

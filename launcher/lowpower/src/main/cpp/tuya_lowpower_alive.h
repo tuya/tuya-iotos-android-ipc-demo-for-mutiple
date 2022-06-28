@@ -18,9 +18,10 @@ typedef int (*wakeup_fun_ptr)(int index);
 typedef int (*alive_socket_close_ptr)(int index,int result);
 
 typedef struct {
-    wakeup_fun_ptr  wakeup_callback;//唤醒回调函数。index参数是tuya_ipc_lowpower_alive_add的第一个参入的值。表示第几路设备。范围[0,200）,最大支持200路
+    wakeup_fun_ptr  wakeup_callback;//唤醒回调函数。index参数是tuya_ipc_lowpower_alive_add的第一个参入的值。表示第几路设备。范围[0,alive_max_number）,最大支持设定的alive_max_number路
     alive_socket_close_ptr close_socket_callback;//包活链路关闭回调。index参数同wakup_fun_ptr。第二个参数result表示链路是否正常关闭。0表示正常关闭，比如主进程拉起，包活链路被主动踢掉的情况。非零，表示异常。此时用户可以重新add 包活
     int alive_time_interval;//包活时间，单位是秒。范围在60到150之间[60,150).合理的值在50到120之间。
+    int alive_max_number;//最大包活数量。范围[1,1024],若alive_max_number=0或者>1024,则默认包活最大为200。
 }TUYA_LOWPOWER_ALIVE_CTX_S;
 /*
  *  tuya_ipc_lowpower_alive_init 初始化低功耗模块，只允许初始化一次。
